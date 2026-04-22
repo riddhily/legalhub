@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Admin Console</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Admin navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Admin Menu</div>
+          <div class="side-links">
+            <a class="active" href="admin.html">Dashboard</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 style="margin:0">Admin Panel</h2>
+              <p>Manage users, firms, and opportunities.</p>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Platform Snapshot</h2>
+                  <p>High-level numbers across JusticeHub.</p>
+                </div>
+              </div>
+              <div id="adminStats" class="grid-1"></div>
+            </section>
+
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Add Law Firm</h2>
+                  <p>Register new firms so they appear in the directory.</p>
+                </div>
+              </div>
+              <form id="firmForm" class="grid-2">
+                <label class="field">
+                  <span>Firm name</span>
+                  <input id="fName" class="input" required />
+                </label>
+                <label class="field">
+                  <span>Logo text (2 letters)</span>
+                  <input id="fLogo" class="input" maxlength="3" placeholder="e.g. LC" />
+                </label>
+                <label class="field">
+                  <span>City</span>
+                  <input id="fCity" class="input" placeholder="City" />
+                </label>
+                <label class="field">
+                  <span>Founding year</span>
+                  <input id="fYear" class="input" type="number" min="1900" max="2100" placeholder="2005" />
+                </label>
+                <label class="field">
+                  <span>No. of lawyers / employees</span>
+                  <input id="fSizeNum" class="input" type="number" min="1" placeholder="20" />
+                </label>
+                <label class="field">
+                  <span>Website</span>
+                  <input id="fWebsite" class="input" type="url" placeholder="https://..." />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Description</span>
+                  <textarea id="fDesc" class="input" rows="2" placeholder="Short overview of the firm"></textarea>
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Practice areas (comma separated)</span>
+                  <input id="fPractice" class="input" placeholder="Corporate Law, Litigation, IPR" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Office locations (comma separated)</span>
+                  <input id="fOffices" class="input" placeholder="Delhi, Mumbai" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Contact email</span>
+                  <input id="fEmail" class="input" type="email" placeholder="careers@example.com" />
+                </label>
+                <label class="field">
+                  <span>Internship openings</span>
+                  <select id="fIntern" class="input">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Job openings</span>
+                  <select id="fJobs" class="input">
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                </label>
+                <div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+                  <button class="btn btn-ghost btn-small" type="reset">Clear</button>
+                  <button class="btn btn-primary btn-small" type="submit">Add Firm</button>
+                </div>
+                <p id="firmMsg" class="meta" style="grid-column:1/-1;margin:4px 0 0" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    jhSeed();
+    const user = jhRequireRole(["admin"]);
+    jhMountNav();
+
+    const users = jhLoad(JH_KEYS.users, []);
+    const firms = jhLoad(JH_KEYS.firms, []);
+    const internships = jhLoad(JH_KEYS.internships, []);
+    const jobs = jhLoad(JH_KEYS.jobs, []);
+    const apps = jhLoad(JH_KEYS.applications, []);
+
+    document.getElementById("adminStats").innerHTML = `
+      <div class="card" style="box-shadow:none">
+        <h3 class="card-title">Users</h3>
+        <div class="meta">
+          <span>${users.length} registered users</span>
+        </div>
+      </div>
+      <div class="card" style="box-shadow:none;margin-top:8px">
+        <h3 class="card-title">Firms</h3>
+        <div class="meta">
+          <span>${firms.length} law firms</span>
+        </div>
+      </div>
+      <div class="card" style="box-shadow:none;margin-top:8px">
+        <h3 class="card-title">Opportunities</h3>
+        <div class="meta">
+          <span>${internships.length} internships · ${jobs.length} jobs</span>
+        </div>
+      </div>
+      <div class="card" style="box-shadow:none;margin-top:8px">
+        <h3 class="card-title">Applications</h3>
+        <div class="meta">
+          <span>${apps.length} total applications</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById("firmForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const f = {
+        id: jhUid("firm"),
+        name: document.getElementById("fName").value.trim(),
+        logoText: document.getElementById("fLogo").value.trim() || "LH",
+        city: document.getElementById("fCity").value.trim() || "Unknown",
+        description: document.getElementById("fDesc").value.trim(),
+        practiceAreas: (document.getElementById("fPractice").value || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        website: document.getElementById("fWebsite").value.trim(),
+        offices: (document.getElementById("fOffices").value || "")
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        contactEmail: document.getElementById("fEmail").value.trim(),
+        foundingYear: document.getElementById("fYear").value
+          ? Number(document.getElementById("fYear").value)
+          : undefined,
+        lawyersCount: document.getElementById("fSizeNum").value
+          ? Number(document.getElementById("fSizeNum").value)
+          : undefined,
+        size: document.getElementById("fSizeNum").value
+          ? Number(document.getElementById("fSizeNum").value) < 20
+            ? "Small"
+            : Number(document.getElementById("fSizeNum").value) < 50
+            ? "Medium"
+            : "Large"
+          : undefined,
+        internshipOpen: document.getElementById("fIntern").value === "yes",
+        jobOpen: document.getElementById("fJobs").value === "yes",
+        verified: true,
+      };
+
+      const list = jhLoad(JH_KEYS.firms, []);
+      list.push(f);
+      jhSave(JH_KEYS.firms, list);
+      document.getElementById("firmMsg").textContent = "Firm added successfully. It will now appear in the directory.";
+      (e.target).reset();
+    });
+  </script>
+</body>
+</html>
+

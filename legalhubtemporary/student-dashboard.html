@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Student Portal</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Student navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Student Menu</div>
+          <div class="side-links">
+            <a class="active" href="student-dashboard.html">Dashboard</a>
+            <a href="student-profile.html">My Profile</a>
+            <a href="internships.html">Internship Finder</a>
+            <a href="jobs.html">Job Portal</a>
+            <a href="tracker.html">Application Tracker</a>
+            <a href="saved.html">Saved Opportunities</a>
+            <a href="knowledge.html">Knowledge Hub</a>
+            <a href="notifications.html">Notifications</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 id="hello" style="margin:0">Dashboard</h2>
+              <p>Career progress, recommendations, and quick actions.</p>
+            </div>
+            <div class="actions">
+              <a class="btn btn-ghost btn-small" href="student-profile.html">Update profile</a>
+              <a class="btn btn-primary btn-small" href="internships.html">Find internships</a>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <article class="card">
+              <div class="meta"><span class="tag gold">Applications</span></div>
+              <h3 class="card-title" id="stat-applied">—</h3>
+              <div class="meta"><span>Internships + jobs applied</span></div>
+            </article>
+            <article class="card">
+              <div class="meta"><span class="tag gold">Saved</span></div>
+              <h3 class="card-title" id="stat-saved">—</h3>
+              <div class="meta"><span>Saved opportunities</span></div>
+            </article>
+            <article class="card">
+              <div class="meta"><span class="tag gold">Recommendations</span></div>
+              <h3 class="card-title" id="stat-reco">—</h3>
+              <div class="meta"><span>Matched internships</span></div>
+            </article>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div class="grid-2">
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Recommended Internships</h2>
+                  <p>Based on your profile interests and skills (Smart Match).</p>
+                </div>
+              </div>
+              <div id="recommended" class="grid-1"></div>
+            </section>
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Application History</h2>
+                  <p>Latest status updates.</p>
+                </div>
+                <a class="btn btn-ghost btn-small" href="tracker.html">Open tracker</a>
+              </div>
+              <div id="history" class="grid-1"></div>
+            </section>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">AI Legal Study Assistant</h2>
+                <p>Ask: “Explain Article 21 in simple language” or “Essentials of a valid contract”.</p>
+              </div>
+              <span class="tag">Student-only</span>
+            </div>
+            <div class="grid-1">
+              <div class="search-row" style="grid-template-columns: 1fr auto;">
+                <input id="ai-q" class="input" placeholder="Ask a legal question..." />
+                <button id="ai-ask" class="btn btn-primary" type="button">Ask</button>
+              </div>
+              <div id="ai-a" class="card" style="box-shadow:none;background:rgba(255,255,255,.02)">
+                <p class="sub" style="margin:0">Your answer will appear here.</p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const user = jhRequireRole(["student"]);
+      if (!user) return;
+      jhMountNav();
+
+      const internships = await jhLoadInternships();
+      let myApps = [];
+      let saved = { internships: [], jobs: [] };
+
+      try { myApps = await jhLoadApplications(); } catch {}
+      try { saved = await jhLoadSaved(); } catch {}
+
+      document.getElementById("hello").textContent = `Welcome, ${user.name}`;
+      document.getElementById("stat-applied").textContent = String(myApps.length);
+
+      const savedCount = (saved.internships?.length || 0) + (saved.jobs?.length || 0);
+      document.getElementById("stat-saved").textContent = String(savedCount);
+
+      // Smart match (simple scoring)
+      const profile = user.profile || {};
+      const interest = (profile.interests || "").toLowerCase();
+      const skills = (profile.skills || "").toLowerCase();
+      const score = (i) => {
+        let s = 0;
+        if (interest && i.practiceArea.toLowerCase().includes(interest)) s += 3;
+        if (skills && (i.requiredSkills || []).some(x => skills.includes(x.toLowerCase().split(" ")[0]))) s += 2;
+        if (i.mode === "Remote") s += 1;
+        if ((i.stipendMax || 0) > 0) s += 1;
+        return s;
+      };
+      const rec = internships
+        .map(i => ({ i, s: score(i) }))
+        .sort((a,b) => b.s - a.s)
+        .slice(0, 4)
+        .map(x => x.i);
+
+      document.getElementById("stat-reco").textContent = String(rec.length);
+      document.getElementById("recommended").innerHTML = rec.map(i => `
+        <div class="card" style="box-shadow:none">
+          <div class="meta">
+            <span class="tag gold">${i.practiceArea}</span>
+            <span class="tag">${i.location}</span>
+            <span class="tag">${i.mode}</span>
+          </div>
+          <h3 class="card-title">${i.title}</h3>
+          <div class="meta"><span>${i.firmName}</span></div>
+          <div class="row">
+            <span class="tag">${jhFormatStipend(i.stipendMin, i.stipendMax)}</span>
+            <a class="btn btn-ghost btn-small" href="internships.html?q=${encodeURIComponent(i.practiceArea)}">Open</a>
+          </div>
+        </div>
+      `).join("");
+
+      // History
+      const latest = myApps.slice(0, 4);
+      document.getElementById("history").innerHTML = latest.length ? latest.map(a => {
+        const item = a.listingId || {};
+        return `
+          <div class="card" style="box-shadow:none">
+            <div class="meta">
+              <span class="tag gold">${a.type === "internship" ? "Internship" : "Job"}</span>
+              <span class="tag">${a.status}</span>
+            </div>
+            <h3 class="card-title">${item.title || "Listing"}</h3>
+            <div class="meta"><span>${item.firmName || ""}</span></div>
+          </div>
+        `;
+      }).join("") : `<p class="sub" style="margin:0">No applications yet. Apply from the internship/job portal.</p>`;
+
+      // AI assistant (rule-based demo)
+      function aiAnswer(q){
+        const t = q.toLowerCase();
+        if (t.includes("article 21")) return "Article 21 (simple):\\n\\n1) The State cannot take away life or personal liberty except by a fair, just and reasonable law.\\n2) Courts expanded Article 21 to include dignity, privacy, legal aid, and speedy trial.\\n3) Exam structure: Bare text → key case(s) → application to facts.";
+        if (t.includes("valid contract") || t.includes("essentials of a valid contract")) return "Essentials of a valid contract (quick checklist):\\n\\n- Offer + Acceptance\\n- Intention to create legal relations\\n- Lawful consideration\\n- Capacity of parties\\n- Free consent\\n- Lawful object\\n- Not expressly void";
+        return "Research template:\\n\\n1) Start with the statute/section and break it into elements.\\n2) Find 2–3 leading judgments for each element.\\n3) Note practical implications + common counter-arguments.";
+      }
+
+      document.getElementById("ai-ask").addEventListener("click", () => {
+        const q = (document.getElementById("ai-q").value || "").trim();
+        if (!q) return;
+        document.getElementById("ai-a").textContent = aiAnswer(q);
+      });
+    })();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Student Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Student Profile</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Student navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Student Menu</div>
+          <div class="side-links">
+            <a href="student-dashboard.html">Dashboard</a>
+            <a class="active" href="student-profile.html">My Profile</a>
+            <a href="internships.html">Internship Finder</a>
+            <a href="jobs.html">Job Portal</a>
+            <a href="tracker.html">Application Tracker</a>
+            <a href="saved.html">Saved Opportunities</a>
+            <a href="knowledge.html">Knowledge Hub</a>
+            <a href="notifications.html">Notifications</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 style="margin:0">My Profile</h2>
+              <p>Create a detailed legal profile recruiters can trust.</p>
+            </div>
+            <a class="btn btn-primary btn-small" href="student-dashboard.html">Back to dashboard</a>
+          </div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">Profile details</h2>
+                <p>Save changes to update your recommendations and visibility.</p>
+              </div>
+              <span class="tag gold">Student</span>
+            </div>
+
+            <form id="profile-form" class="grid-2">
+              <label class="field">
+                <span>Profile photo (placeholder)</span>
+                <input id="photo" class="input" type="file" />
+              </label>
+              <div class="field">
+                <span>Full name</span>
+                <input id="name" class="input" type="text" required />
+              </div>
+
+              <label class="field">
+                <span>Law college name</span>
+                <input id="college" class="input" type="text" placeholder="University / College" />
+              </label>
+              <label class="field">
+                <span>Degree</span>
+                <select id="degree" class="input">
+                  <option>LLB</option>
+                  <option>BA LLB</option>
+                  <option>LLM</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Year of study</span>
+                <select id="yearOfStudy" class="input">
+                  <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Graduation year</span>
+                <input id="gradYear" class="input" type="number" min="2000" max="2100" placeholder="2027" />
+              </label>
+
+              <label class="field">
+                <span>Location</span>
+                <input id="location" class="input" type="text" placeholder="City" />
+              </label>
+              <label class="field">
+                <span>Resume upload</span>
+                <input id="resume" class="input" type="file" />
+              </label>
+
+              <label class="field" style="grid-column:1/-1">
+                <span>Skills (comma separated)</span>
+                <input id="skills" class="input" type="text" placeholder="Legal research, drafting, contract review" />
+              </label>
+
+              <label class="field" style="grid-column:1/-1">
+                <span>Practice interests</span>
+                <input id="interests" class="input" type="text" placeholder="Corporate law, criminal law, constitutional law, IP, litigation" />
+              </label>
+
+              <label class="field" style="grid-column:1/-1">
+                <span>Internship experience</span>
+                <textarea id="experience" class="input" rows="3" placeholder="Describe internships, responsibilities, and outcomes..."></textarea>
+              </label>
+
+              <label class="field" style="grid-column:1/-1">
+                <span>Certificates</span>
+                <textarea id="certificates" class="input" rows="2" placeholder="List relevant certificates..."></textarea>
+              </label>
+
+              <label class="field" style="grid-column:1/-1">
+                <span>Research papers / moot court achievements</span>
+                <textarea id="papers" class="input" rows="2" placeholder="List papers, moots, publications..."></textarea>
+              </label>
+
+              <div style="grid-column:1/-1; display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end">
+                <button class="btn btn-ghost" type="button" id="reset">Reset</button>
+                <button class="btn btn-primary" type="submit">Save profile</button>
+              </div>
+              <p id="msg" class="meta" style="grid-column:1/-1; margin:0" aria-live="polite"></p>
+            </form>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    jhSeed();
+    const user = jhRequireRole(["student"]);
+    jhMountNav();
+
+    const users = jhLoad(JH_KEYS.users, []);
+    const meIdx = users.findIndex(u => u.id === user.id);
+    const me = meIdx >= 0 ? users[meIdx] : null;
+    const profile = (me && me.profile) ? me.profile : {};
+
+    // Populate
+    document.getElementById("name").value = (me && me.name) ? me.name : user.name;
+    document.getElementById("college").value = profile.college || "";
+    document.getElementById("degree").value = profile.degree || "LLB";
+    document.getElementById("yearOfStudy").value = profile.yearOfStudy || "1";
+    document.getElementById("gradYear").value = profile.gradYear || "";
+    document.getElementById("location").value = profile.location || "";
+    document.getElementById("skills").value = profile.skills || "";
+    document.getElementById("interests").value = profile.interests || "";
+    document.getElementById("experience").value = profile.experience || "";
+    document.getElementById("certificates").value = profile.certificates || "";
+    document.getElementById("papers").value = profile.papers || "";
+
+    document.getElementById("profile-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (meIdx < 0){
+        document.getElementById("msg").textContent = "Profile not found. Please signup again.";
+        return;
+      }
+      users[meIdx].name = document.getElementById("name").value.trim();
+      users[meIdx].profile = {
+        ...users[meIdx].profile,
+        college: document.getElementById("college").value.trim(),
+        degree: document.getElementById("degree").value,
+        yearOfStudy: document.getElementById("yearOfStudy").value,
+        gradYear: document.getElementById("gradYear").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        skills: document.getElementById("skills").value.trim(),
+        interests: document.getElementById("interests").value.trim(),
+        experience: document.getElementById("experience").value.trim(),
+        certificates: document.getElementById("certificates").value.trim(),
+        papers: document.getElementById("papers").value.trim(),
+      };
+      jhSave(JH_KEYS.users, users);
+      jhSetCurrentUser({ ...user, name: users[meIdx].name });
+      document.getElementById("msg").textContent = "Profile saved successfully.";
+    });
+
+    document.getElementById("reset").addEventListener("click", () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Law Firm Directory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Law Firm Directory</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a class="active" href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="page-title">
+        <div>
+          <h2 style="margin:0">Law Firms on JusticeHub</h2>
+          <p>Discover verified law firms, chambers, and legal organisations.</p>
+        </div>
+      </div>
+
+      <div class="layout" style="grid-template-columns: 320px minmax(0,1fr);">
+        <aside class="sidebar">
+          <div class="side-title">Search & Filters</div>
+          <div class="grid-1">
+            <label class="field">
+              <span>Search</span>
+              <input id="search" class="input" placeholder="Firm name or specialisation..." />
+            </label>
+            <label class="field">
+              <span>Location</span>
+              <select id="filterLocation" class="input">
+                <option value="">Any</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Practice area</span>
+              <select id="filterPractice" class="input">
+                <option value="">Any</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Internship availability</span>
+              <select id="filterIntern" class="input">
+                <option value="">Any</option>
+                <option value="yes">Internships open</option>
+                <option value="no">No internships</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Firm size</span>
+              <select id="filterSize" class="input">
+                <option value="">Any</option>
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Experience level required</span>
+              <select id="filterExp" class="input">
+                <option value="">Any</option>
+                <option value="0-2">0–2 years</option>
+                <option value="2-5">2–5 years</option>
+                <option value="5+">5+ years</option>
+              </select>
+            </label>
+            <button id="applyFilters" class="btn btn-primary btn-full" type="button">Apply filters</button>
+            <button id="clearFilters" class="btn btn-ghost btn-full" type="button">Clear</button>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="section-head">
+            <div>
+              <h2>Firms</h2>
+              <p id="resultCount">—</p>
+            </div>
+            <span class="tag gold">Verified legal organisations</span>
+          </div>
+
+          <div id="grid" class="grid-3"></div>
+          <div id="noFirms" class="card" style="display:none;margin-top:10px;">
+            <h3 class="card-title">Currently no law firms are listed.</h3>
+            <p class="sub" style="margin:4px 0 10px">
+              Be the first firm to join Justice Hub and start reaching law students and young lawyers.
+            </p>
+            <div class="actions">
+              <a class="btn btn-primary btn-small" href="auth.html?role=recruiter">Register Your Law Firm</a>
+              <a class="btn btn-ghost btn-small" href="internships.html">Explore Legal Opportunities</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const authed = jhRequireAuth("auth.html");
+      if (!authed) return;
+      jhMountNav();
+
+      const firms = await jhLoadFirms();
+      const internships = await jhLoadInternships();
+      const jobs = await jhLoadJobs();
+
+      const grid = document.getElementById("grid");
+      const resultCount = document.getElementById("resultCount");
+      const noFirms = document.getElementById("noFirms");
+
+      if (!firms.length) {
+        grid.innerHTML = "";
+        resultCount.textContent = "0 firms";
+        noFirms.style.display = "block";
+      }
+
+      const locSelect = document.getElementById("filterLocation");
+      const pracSelect = document.getElementById("filterPractice");
+      const cities = Array.from(new Set(firms.map(f => f.city))).sort();
+      locSelect.innerHTML += cities.map(c => `<option>${c}</option>`).join("");
+      const practices = Array.from(new Set(firms.flatMap(f => f.practiceAreas || []))).sort();
+      pracSelect.innerHTML += practices.map(p => `<option>${p}</option>`).join("");
+
+      function firmMeta(firm) {
+        const internCount = internships.filter(i => i.firmName === firm.name).length;
+        const jobList = jobs.filter(j => j.firmName === firm.name);
+        const jobCount = jobList.length;
+        const internshipOpen = internCount > 0;
+        const jobOpen = jobCount > 0;
+        const size = firm.size || "—";
+        let minExp = null;
+        jobList.forEach(j => {
+          const m = (j.eligibility || "").match(/(\d+)\s*[-–]?\s*(\d*)\s*year/i);
+          if (m) { const val = parseInt(m[1], 10); if (!Number.isNaN(val) && (minExp === null || val < minExp)) minExp = val; }
+        });
+        let expBand = "";
+        if (minExp !== null) { if (minExp <= 2) expBand = "0-2"; else if (minExp <= 5) expBand = "2-5"; else expBand = "5+"; }
+        return { internshipOpen, jobOpen, size, expBand, internCount, jobCount };
+      }
+
+      function matchesFilters(firm) {
+        const q = (document.getElementById("search").value || "").trim().toLowerCase();
+        const floc = document.getElementById("filterLocation").value;
+        const fprac = document.getElementById("filterPractice").value;
+        const fintern = document.getElementById("filterIntern").value;
+        const fsize = document.getElementById("filterSize").value;
+        const fexp = document.getElementById("filterExp").value;
+        const meta = firmMeta(firm);
+        const hay = (firm.name + " " + firm.description + " " + (firm.practiceAreas || []).join(" ")).toLowerCase();
+        if (q && !hay.includes(q)) return false;
+        if (floc && firm.city !== floc) return false;
+        if (fprac && !(firm.practiceAreas || []).includes(fprac)) return false;
+        if (fintern === "yes" && !meta.internshipOpen) return false;
+        if (fintern === "no" && meta.internshipOpen) return false;
+        if (fsize && meta.size !== fsize) return false;
+        if (fexp && meta.expBand !== fexp) return false;
+        return true;
+      }
+
+      function render() {
+        if (!firms.length) return;
+        const filtered = firms.filter(matchesFilters);
+        resultCount.textContent = `${filtered.length} firms`;
+        noFirms.style.display = filtered.length ? "none" : "block";
+        grid.innerHTML = filtered.map(f => {
+          const meta = firmMeta(f);
+          const internBadge = meta.internshipOpen ? "Internships open" : "No internships";
+          const jobBadge = meta.jobOpen ? "Jobs open" : "No active jobs";
+          return `
+            <article class="card">
+              <div class="meta">
+                <span class="tag gold">${f.logoText || "LH"}</span>
+                <span class="tag">${f.city}</span>
+                <span class="tag">${meta.size}</span>
+              </div>
+              <h3 class="card-title">${f.name}</h3>
+              <p class="sub" style="margin:4px 0 6px">${f.description}</p>
+              <div class="meta" style="margin-bottom:6px">
+                ${(f.practiceAreas || []).slice(0, 3).map(p => `<span class="tag">${p}</span>`).join("")}
+              </div>
+              <div class="meta" style="margin-top:4px">
+                <span class="tag ${meta.internshipOpen ? "gold" : ""}">${internBadge}</span>
+                <span class="tag ${meta.jobOpen ? "gold" : ""}">${jobBadge}</span>
+              </div>
+              <div class="row">
+                <span class="tag">View details</span>
+                <a class="btn btn-ghost btn-small" href="firm.html?id=${encodeURIComponent(f._id)}">View Firm Profile</a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      document.getElementById("applyFilters").addEventListener("click", render);
+      document.getElementById("clearFilters").addEventListener("click", () => {
+        document.getElementById("search").value = "";
+        ["filterLocation", "filterPractice", "filterIntern", "filterSize", "filterExp"].forEach(id => document.getElementById(id).value = "");
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
+

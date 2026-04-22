@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Saved Opportunities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Student Portal</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Student navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Student Menu</div>
+          <div class="side-links">
+            <a href="student-dashboard.html">Dashboard</a>
+            <a href="student-profile.html">My Profile</a>
+            <a href="internships.html">Internship Finder</a>
+            <a href="jobs.html">Job Portal</a>
+            <a href="tracker.html">Application Tracker</a>
+            <a class="active" href="saved.html">Saved Opportunities</a>
+            <a href="knowledge.html">Knowledge Hub</a>
+            <a href="notifications.html">Notifications</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 style="margin:0">Saved Opportunities</h2>
+              <p>Internships and jobs you have bookmarked for later.</p>
+            </div>
+            <div class="actions">
+              <a class="btn btn-primary btn-small" href="internships.html">Find more</a>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Saved Internships</h2>
+                  <p id="internCount">0 found</p>
+                </div>
+              </div>
+              <div id="saved-internships" class="grid-1"></div>
+            </section>
+
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Saved Jobs</h2>
+                  <p id="jobCount">0 found</p>
+                </div>
+              </div>
+              <div id="saved-jobs" class="grid-1"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const user = jhRequireRole(["student"]);
+      if (!user) return;
+      jhMountNav();
+
+      async function render() {
+        let saved = { internships: [], jobs: [] };
+        try { saved = await jhLoadSaved(); } catch {}
+
+        const savedInterns = saved.internships || [];
+        const savedJobItems = saved.jobs || [];
+
+        document.getElementById("internCount").textContent = `${savedInterns.length} saved`;
+        document.getElementById("jobCount").textContent = `${savedJobItems.length} saved`;
+
+        const internContainer = document.getElementById("saved-internships");
+        if (savedInterns.length === 0) {
+          internContainer.innerHTML = '<p class="sub" style="margin:0">No saved internships.</p>';
+        } else {
+          internContainer.innerHTML = savedInterns.map(i => `
+            <div class="card" style="box-shadow:none">
+              <div class="meta">
+                <span class="tag gold">${i.practiceArea}</span>
+                <span class="tag">${i.location}</span>
+                <span class="tag">${i.mode}</span>
+              </div>
+              <h3 class="card-title">${i.title}</h3>
+              <div class="meta"><span>${i.firmName}</span></div>
+              <div class="row">
+                <span class="tag">${jhFormatStipend(i.stipendMin, i.stipendMax)}</span>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-ghost btn-small unsave-btn" data-type="internship" data-id="${i._id}">Unsave</button>
+                  <a class="btn btn-primary btn-small" href="internships.html?q=${encodeURIComponent(i.title)}">Open</a>
+                </div>
+              </div>
+            </div>
+          `).join("");
+        }
+
+        const jobContainer = document.getElementById("saved-jobs");
+        if (savedJobItems.length === 0) {
+          jobContainer.innerHTML = '<p class="sub" style="margin:0">No saved jobs.</p>';
+        } else {
+          jobContainer.innerHTML = savedJobItems.map(j => `
+            <div class="card" style="box-shadow:none">
+              <div class="meta">
+                <span class="tag gold">${j.practiceArea}</span>
+                <span class="tag">${j.location}</span>
+                <span class="tag">${j.mode}</span>
+              </div>
+              <h3 class="card-title">${j.title}</h3>
+              <div class="meta"><span>${j.firmName}</span></div>
+              <div class="row">
+                <span class="tag">${jhFormatSalary(j.salaryMin, j.salaryMax)}</span>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-ghost btn-small unsave-btn" data-type="job" data-id="${j._id}">Unsave</button>
+                  <a class="btn btn-primary btn-small" href="jobs.html?q=${encodeURIComponent(j.title)}">Open</a>
+                </div>
+              </div>
+            </div>
+          `).join("");
+        }
+
+        document.querySelectorAll(".unsave-btn").forEach(btn => {
+          btn.addEventListener("click", async (e) => {
+            const id = e.target.dataset.id;
+            const type = e.target.dataset.type;
+            try {
+              await jhUnsaveOpp(id, type);
+              await render();
+            } catch (err) {
+              console.error(err);
+            }
+          });
+        });
+      }
+
+      await render();
+    })();
+  </script>
+</body>
+</html>

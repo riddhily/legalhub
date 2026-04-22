@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Knowledge Center – JusticeHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Legal Knowledge Center</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a class="active" href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="knowledge-hero">
+      <div class="container">
+        <header class="knowledge-head">
+          <h1>Legal Knowledge Center – Justice Hub</h1>
+          <p>
+            This page provides basic educational information about important areas of Indian law. It is designed to
+            help students and general users understand key legal concepts in simple language.
+          </p>
+        </header>
+
+        <div class="knowledge-toolbar">
+          <div class="knowledge-search">
+            <input id="searchInput" class="input" placeholder="Search law topics, e.g. bail, dowry, cyber crime..." />
+            <button id="searchBtn" class="btn btn-primary" type="button">Search</button>
+          </div>
+          <div class="pill-row" aria-label="Filter by category">
+            <button class="pill pill-active" data-filter="all" type="button">All</button>
+            <button class="pill" data-filter="Criminal" type="button">Criminal</button>
+            <button class="pill" data-filter="Family" type="button">Family</button>
+            <button class="pill" data-filter="Property" type="button">Property</button>
+            <button class="pill" data-filter="Cyber" type="button">Cyber</button>
+            <button class="pill" data-filter="Consumer" type="button">Consumer</button>
+            <button class="pill" data-filter="Workplace" type="button">Workplace</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div id="lawGrid" class="grid-3">
+          <!-- Cards inserted by script -->
+        </div>
+        <p id="emptyMsg" class="sub" style="margin-top:12px;display:none">No topics match your search. Try a broader keyword or different category.</p>
+
+        <p class="disclaimer">
+          Disclaimer: The information on this page is for educational purposes only and does not constitute professional
+          legal advice. For advice on specific cases or legal problems, please consult a qualified advocate or legal
+          professional registered with the appropriate Bar Council.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const authed = jhRequireAuth("auth.html");
+      if (!authed) return;
+      jhMountNav();
+
+    const topics = [
+      {
+        id: "criminal-law",
+        icon: "⚖",
+        heading: "Criminal Law",
+        category: "Criminal",
+        summary:
+          "Criminal law deals with offences against the State and society, such as theft, assault, cheating, and serious crimes like murder.",
+        provision:
+          "Key statutes: Indian Penal Code, 1860 (IPC) and Code of Criminal Procedure, 1973 (CrPC).",
+        detail:
+          "Criminal cases usually begin with an FIR or complaint, followed by investigation, charge sheet, trial, and appeal. IPC defines offences and punishments, while CrPC lays down the procedure for investigation, arrest, bail, trial, and appeals. Rights of the accused and victims are protected through constitutional safeguards (Articles 20–22) and judicial guidelines.",
+      },
+      {
+        id: "attempt-to-murder",
+        icon: "🛡",
+        heading: "Attempt to Murder",
+        category: "Criminal",
+        summary:
+          "Attempt to murder is a serious offence where a person intends to cause death and takes a direct step towards it, even if death does not occur.",
+        provision: "Key provision: Section 307 of the Indian Penal Code, 1860.",
+        detail:
+          "Under Section 307 IPC, the court looks at intention, weapon used, nature of injuries, and surrounding circumstances. The offence is non-bailable and cognizable. Punishment can extend to ten years imprisonment, or even life imprisonment if hurt is caused. The focus is on the intention and act, not only the result.",
+      },
+      {
+        id: "divorce-law",
+        icon: "💔",
+        heading: "Divorce Law",
+        category: "Family",
+        summary:
+          "Divorce law governs how a marriage can be legally dissolved, including grounds, procedure, and rights of spouses.",
+        provision:
+          "Key statutes: Hindu Marriage Act, 1955; Special Marriage Act, 1954; personal laws for other religions.",
+        detail:
+          "Grounds for divorce typically include cruelty, desertion, adultery, conversion, mental disorder, or irretrievable breakdown (in certain cases). There are provisions for mutual consent divorce, where both parties agree to separate. Issues like maintenance, alimony, child custody, and property rights are decided by the court taking into account the welfare of children and financial circumstances of the parties.",
+      },
+      {
+        id: "harassment-law",
+        icon: "🚫",
+        heading: "Harassment Law",
+        category: "Criminal",
+        summary:
+          "Harassment can include unwanted physical or verbal conduct, stalking, or sexual harassment in public, private, or online spaces.",
+        provision:
+          "Key provisions: Section 354A IPC (sexual harassment) and the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013 (POSH Act).",
+        detail:
+          "Section 354A IPC penalises unwelcome physical contact, demands for sexual favours, showing pornography, and sexually coloured remarks. The POSH Act requires workplaces with 10+ employees to set up an Internal Complaints Committee, follow a defined procedure, and provide a safe work environment. Complaints must be handled confidentially and promptly.",
+      },
+      {
+        id: "domestic-violence",
+        icon: "🏠",
+        heading: "Domestic Violence Law",
+        category: "Family",
+        summary:
+          "Domestic violence covers physical, emotional, verbal, sexual, and economic abuse within a household, not limited to husband and wife.",
+        provision:
+          "Key statute: Protection of Women from Domestic Violence Act, 2005 (PWDVA).",
+        detail:
+          "The PWDVA is a civil law providing protection orders, residence orders, monetary relief, custody orders, and compensation. It recognises various forms of abuse and allows women in domestic relationships to seek relief from Magistrate courts. Proceedings are meant to be summary and victim-friendly, with the help of Protection Officers and service providers.",
+      },
+      {
+        id: "dowry-law",
+        icon: "🎁",
+        heading: "Dowry Law",
+        category: "Family",
+        summary:
+          "Dowry laws aim to prevent the giving and taking of dowry in connection with marriage and to punish related cruelty.",
+        provision:
+          "Key statutes: Dowry Prohibition Act, 1961 and Section 498A IPC (cruelty by husband or relatives).",
+        detail:
+          "The Dowry Prohibition Act makes giving, taking, or demanding dowry an offence. Section 498A IPC punishes cruelty by husband or his relatives, including harassment for dowry. Courts have also issued guidelines to prevent misuse while ensuring protection of women. Evidence like messages, financial records, and witness statements can be important.",
+      },
+      {
+        id: "cyber-law",
+        icon: "💻",
+        heading: "Cyber Law",
+        category: "Cyber",
+        summary:
+          "Cyber law deals with offences and rights related to computers, the internet, digital data, and online behaviour.",
+        provision:
+          "Key statute: Information Technology Act, 2000 (as amended) and relevant sections of IPC for cyber offences.",
+        detail:
+          "The IT Act covers hacking, unauthorised access, data theft, identity theft, cyber terrorism, and publication of obscene material online. It also gives legal recognition to electronic records and digital signatures. Many cyber offences are investigated by specialised cyber cells. Digital evidence like logs, IP addresses, and device data is crucial.",
+      },
+      {
+        id: "property-law",
+        icon: "📜",
+        heading: "Property Law",
+        category: "Property",
+        summary:
+          "Property law governs ownership, transfer, and inheritance of movable and immovable property.",
+        provision:
+          "Key statutes: Transfer of Property Act, 1882; Registration Act, 1908; Indian Succession Act, 1925; various state land laws.",
+        detail:
+          "Property law covers sale, gift, lease, mortgage, and exchange of property. Valid transfer often requires a written instrument, proper execution, and registration. Inheritance rules may depend on personal laws (e.g., Hindu Succession Act). Due diligence and clear title are critical in property transactions.",
+      },
+      {
+        id: "consumer-law",
+        icon: "🛒",
+        heading: "Consumer Law",
+        category: "Consumer",
+        summary:
+          "Consumer law protects buyers of goods and services against unfair trade practices, defective products, and deficient services.",
+        provision:
+          "Key statute: Consumer Protection Act, 2019.",
+        detail:
+          "The Act recognises rights such as the right to safety, information, choice, and redressal. Consumers can file complaints before District, State, or National Commissions depending on the value involved. Issues include defective products, deficient services, misleading advertisements, and overcharging. Online and e-commerce transactions are also covered.",
+      },
+      {
+        id: "workplace-law",
+        icon: "🏢",
+        heading: "Workplace / Labour Law",
+        category: "Workplace",
+        summary:
+          "Workplace or labour laws regulate conditions of employment, wages, working hours, safety, and social security of workers and employees.",
+        provision:
+          "Key laws include: Industrial Disputes Act, various labour codes (e.g., Code on Wages, Code on Social Security), and state-specific Shops and Establishments Acts.",
+        detail:
+          "Labour law covers topics like minimum wages, overtime, leave, termination, retrenchment, and dispute resolution mechanisms. Recent labour codes seek to consolidate and simplify multiple older laws. Compliance obligations often differ for factories, shops, and establishments, and between workmen and managerial staff.",
+      },
+      {
+        id: "family-law",
+        icon: "👨‍👩‍👧",
+        heading: "Family Law",
+        category: "Family",
+        summary:
+          "Family law governs marriage, divorce, adoption, maintenance, guardianship, and succession, often based on religion-specific personal laws.",
+        provision:
+          "Key statutes include: Hindu Marriage Act, 1955; Hindu Succession Act, 1956; Special Marriage Act, 1954; personal laws for Muslims, Christians, Parsis, etc.",
+        detail:
+          "Family disputes often involve questions of legitimacy, custody, maintenance, and inheritance. Courts usually prioritise the welfare of children in custody matters. Inter-faith and inter-caste marriages are governed by the Special Marriage Act, which provides a secular route with specific procedural requirements.",
+      },
+      {
+        id: "domestic-violence-law",
+        icon: "🛡",
+        heading: "Domestic Violence & Protection",
+        category: "Family",
+        summary:
+          "This area overlaps with family and criminal law, focusing on protection of women and other vulnerable persons within households.",
+        provision:
+          "Key statutes: Protection of Women from Domestic Violence Act, 2005 and relevant provisions of IPC.",
+        detail:
+          "The Act allows for residence orders, protection orders, monetary relief, and compensation. It applies not only to wives but also to women in domestic relationships such as live-in partners, sisters, and mothers. Proceedings are meant to be swift and supportive, with Protection Officers assisting complainants.",
+      },
+    ];
+
+    const grid = document.getElementById("lawGrid");
+    const emptyMsg = document.getElementById("emptyMsg");
+
+    function renderCards() {
+      grid.innerHTML = topics
+        .map(
+          (t) => `
+        <article class="card law-card" data-category="${t.category}" data-search="${(t.heading + ' ' + t.summary + ' ' + t.detail + ' ' + t.provision + ' ' + t.category).toLowerCase()}">
+          <div class="law-icon" aria-hidden="true">${t.icon}</div>
+          <h2 class="card-title">${t.heading}</h2>
+          <p class="sub" style="margin:4px 0 4px">${t.summary}</p>
+          <p class="law-meta"><strong>Key Indian law:</strong> ${t.provision}</p>
+          <div class="law-toggle">
+            <button class="btn btn-ghost btn-small" type="button" data-toggle="${t.id}">Read more</button>
+          </div>
+          <div class="accordion-body" id="${t.id}">
+            <p>${t.detail}</p>
+          </div>
+        </article>
+      `,
+        )
+        .join("");
+    }
+
+    renderCards();
+
+    function applyFilterAndSearch() {
+      const activePill = document.querySelector(".pill.pill-active");
+      const category = activePill ? activePill.getAttribute("data-filter") : "all";
+      const q = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+
+      let visibleCount = 0;
+      grid.querySelectorAll(".law-card").forEach((card) => {
+        const cat = card.getAttribute("data-category");
+        const hay = card.getAttribute("data-search") || "";
+        const categoryMatch = category === "all" || cat === category;
+        const searchMatch = !q || hay.includes(q);
+        const show = categoryMatch && searchMatch;
+        card.style.display = show ? "" : "none";
+        if (show) visibleCount++;
+      });
+
+      emptyMsg.style.display = visibleCount ? "none" : "block";
+    }
+
+    document.querySelectorAll(".pill").forEach((pill) => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".pill").forEach((p) => p.classList.remove("pill-active"));
+        pill.classList.add("pill-active");
+        applyFilterAndSearch();
+      });
+    });
+
+    document.getElementById("searchBtn").addEventListener("click", applyFilterAndSearch);
+    document.getElementById("searchInput").addEventListener("input", applyFilterAndSearch);
+
+    // Accordion read more
+    grid.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-toggle]");
+      if (!btn) return;
+      const id = btn.getAttribute("data-toggle");
+      const body = document.getElementById(id);
+      if (!body) return;
+      const isOpen = body.classList.contains("open");
+      if (isOpen) {
+        body.style.maxHeight = "0px";
+        body.classList.remove("open");
+        btn.textContent = "Read more";
+      } else {
+        body.classList.add("open");
+        body.style.maxHeight = body.scrollHeight + "px";
+        btn.textContent = "Read less";
+      }
+    });
+    })();
+  </script>
+</body>
+</html>
+

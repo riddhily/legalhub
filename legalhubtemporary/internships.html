@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Internship Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Internship Portal</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a class="active" href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="page-title">
+        <div>
+          <h2 style="margin:0">Internship Finder</h2>
+          <p>Filter by location, practice area, mode, stipend range, and duration.</p>
+        </div>
+        <a class="btn btn-ghost btn-small" href="auth.html">Login to apply</a>
+      </div>
+
+      <div class="layout" style="grid-template-columns: 320px minmax(0,1fr);">
+        <aside class="sidebar">
+          <div class="side-title">Filters</div>
+          <div class="grid-1">
+            <label class="field">
+              <span>Keyword</span>
+              <input id="q" class="input" placeholder="e.g., drafting, litigation" />
+            </label>
+            <label class="field">
+              <span>Location</span>
+              <select id="location" class="input">
+                <option value="">Any</option>
+                <option>Delhi</option>
+                <option>Mumbai</option>
+                <option>Bengaluru</option>
+                <option>Kolkata</option>
+                <option>Remote</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Practice area</span>
+              <select id="practice" class="input">
+                <option value="">Any</option>
+                <option>Criminal Law</option>
+                <option>Corporate Law</option>
+                <option>Cyber Law</option>
+                <option>Intellectual Property Law</option>
+                <option>Constitutional Law</option>
+                <option>Family Law</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Remote / Offline</span>
+              <select id="mode" class="input">
+                <option value="">Any</option>
+                <option>Remote</option>
+                <option>Hybrid</option>
+                <option>In-office</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Stipend (min ₹/month)</span>
+              <input id="stipendMin" class="input" type="number" min="0" placeholder="0" />
+            </label>
+            <label class="field">
+              <span>Duration (max weeks)</span>
+              <input id="durationMax" class="input" type="number" min="1" placeholder="12" />
+            </label>
+            <button id="applyFilters" class="btn btn-primary btn-full" type="button">Apply filters</button>
+            <button id="clearFilters" class="btn btn-ghost btn-full" type="button">Clear</button>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="section-head">
+            <div>
+              <h2>Results</h2>
+              <p id="resultCount">—</p>
+            </div>
+            <span class="tag gold">Verified firms</span>
+          </div>
+
+          <div id="list" class="grid-2"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Detail modal -->
+  <div id="modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:grid;place-items:center;padding:18px">
+    <div class="glass" style="width:min(920px,100%);padding:16px">
+      <div class="row" style="margin-top:0">
+        <div>
+          <h2 id="mTitle" style="margin:0 0 6px">—</h2>
+          <div id="mMeta" class="meta"></div>
+        </div>
+        <button id="mClose" class="btn btn-ghost btn-small" type="button">Close</button>
+      </div>
+      <div class="grid-2" style="margin-top:12px">
+        <div class="card" style="box-shadow:none">
+          <h3 class="card-title">Description</h3>
+          <p id="mDesc" class="sub" style="margin:0"></p>
+        </div>
+        <div class="card" style="box-shadow:none">
+          <h3 class="card-title">Eligibility & skills</h3>
+          <p id="mElig" class="sub" style="margin:0 0 10px"></p>
+          <div id="mSkills" class="meta"></div>
+        </div>
+      </div>
+      <div class="row">
+        <span id="mDeadline" class="tag">Deadline: —</span>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="mSave" class="btn btn-ghost btn-small" type="button">Save</button>
+          <button id="mApply" class="btn btn-primary btn-small" type="button">Apply</button>
+        </div>
+      </div>
+      <p id="mMsg" class="meta" style="margin:10px 0 0" aria-live="polite"></p>
+    </div>
+  </div>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const authed = jhRequireAuth("auth.html");
+      if (!authed) return;
+      jhMountNav();
+
+      let internships = await jhLoadInternships();
+      const user = jhGetCurrentUser();
+
+      const params = new URLSearchParams(location.search);
+      document.getElementById("q").value = decodeURIComponent(params.get("q") || "").replace(/\+/g," ");
+      document.getElementById("location").value = decodeURIComponent(params.get("location") || "");
+      document.getElementById("practice").value = decodeURIComponent(params.get("practice") || "");
+
+      const list = document.getElementById("list");
+      const resultCount = document.getElementById("resultCount");
+
+      function match(i){
+        const q = (document.getElementById("q").value || "").trim().toLowerCase();
+        const location = document.getElementById("location").value;
+        const practice = document.getElementById("practice").value;
+        const mode = document.getElementById("mode").value;
+        const stipendMin = Number(document.getElementById("stipendMin").value || 0);
+        const durationMax = Number(document.getElementById("durationMax").value || 0);
+
+        const hay = `${i.title} ${i.firmName} ${i.practiceArea} ${i.location} ${i.mode} ${i.description}`.toLowerCase();
+        if (q && !hay.includes(q)) return false;
+        if (location && i.location !== location) return false;
+        if (practice && i.practiceArea !== practice) return false;
+        if (mode && i.mode !== mode) return false;
+        if (stipendMin && (i.stipendMax || 0) < stipendMin) return false;
+        if (durationMax && (i.durationWeeks || 0) > durationMax) return false;
+        return true;
+      }
+
+      function render(){
+        const filtered = internships.filter(match);
+        resultCount.textContent = `${filtered.length} internships found`;
+        list.innerHTML = filtered.map(i => `
+          <article class="card">
+            <div class="meta">
+              <span class="tag gold">${i.practiceArea}</span>
+              <span class="tag">${i.mode}</span>
+              <span class="tag">${i.location}</span>
+            </div>
+            <h3 class="card-title">${i.title}</h3>
+            <div class="meta">
+              <span>${i.firmName}</span><span>·</span>
+              <span>${jhFormatStipend(i.stipendMin, i.stipendMax)}</span>
+            </div>
+            <div class="row">
+              <span class="tag">Duration: ${i.durationWeeks} weeks</span>
+              <button class="btn btn-ghost btn-small" data-open="${i._id}" type="button">Open</button>
+            </div>
+          </article>
+        `).join("");
+
+        list.querySelectorAll("[data-open]").forEach(btn => {
+          btn.addEventListener("click", () => openModal(btn.dataset.open));
+        });
+      }
+
+      document.getElementById("applyFilters").addEventListener("click", render);
+      document.getElementById("clearFilters").addEventListener("click", () => {
+        ["q","location","practice","mode","stipendMin","durationMax"].forEach(id => document.getElementById(id).value = "");
+        render();
+      });
+
+      const modal = document.getElementById("modal");
+      let currentId = null;
+
+      function openModal(id){
+        const i = internships.find(x => x._id === id);
+        if (!i) return;
+        currentId = id;
+        document.getElementById("mTitle").textContent = i.title;
+        document.getElementById("mMeta").innerHTML = `
+          <span class="tag gold">${i.practiceArea}</span>
+          <span class="tag">${i.firmName}</span>
+          <span class="tag">${i.location} · ${i.mode}</span>
+          <span class="tag">${jhFormatStipend(i.stipendMin, i.stipendMax)}</span>
+          <span class="tag">Duration: ${i.durationWeeks} weeks</span>
+        `;
+        document.getElementById("mDesc").textContent = i.description;
+        document.getElementById("mElig").textContent = i.eligibility;
+        document.getElementById("mSkills").innerHTML = (i.requiredSkills || []).map(s => `<span class="tag">${s}</span>`).join("");
+        document.getElementById("mDeadline").textContent = `Deadline: ${i.deadline}`;
+        document.getElementById("mMsg").textContent = "";
+        modal.classList.remove("hidden");
+      }
+
+      document.getElementById("mClose").addEventListener("click", () => modal.classList.add("hidden"));
+      modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.add("hidden"); });
+
+      document.getElementById("mApply").addEventListener("click", async () => {
+        if (!user || user.role !== "student"){
+          document.getElementById("mMsg").textContent = "Please login as a student to apply.";
+          return;
+        }
+        try {
+          const res = await jhApply("internship", currentId);
+          document.getElementById("mMsg").textContent = res.message;
+        } catch (err) {
+          document.getElementById("mMsg").textContent = err.message || "Already applied.";
+        }
+      });
+
+      document.getElementById("mSave").addEventListener("click", async () => {
+        if (!user || user.role !== "student"){
+          document.getElementById("mMsg").textContent = "Please login as a student to save.";
+          return;
+        }
+        try {
+          await jhSaveOpp(currentId, "internship");
+          document.getElementById("mMsg").textContent = "Saved to your dashboard.";
+        } catch (err) {
+          document.getElementById("mMsg").textContent = err.message || "Error saving.";
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
+

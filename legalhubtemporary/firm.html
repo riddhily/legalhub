@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Firm Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Firm Profile</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" style="padding:32px 0 18px;">
+      <div class="container">
+        <div id="firmHeader" class="card" style="background:radial-gradient(circle at top left, rgba(37,99,235,.5), rgba(10,10,10,1));">
+          <!-- Filled by script -->
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="grid-2">
+          <section class="card" id="firmOverview">
+            <!-- overview + offices + practice areas -->
+          </section>
+          <section class="card" id="firmOpportunities">
+            <!-- internships + jobs -->
+          </section>
+        </div>
+
+        <section class="card" id="firmContact" style="margin-top:14px">
+          <!-- contact -->
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const authed = jhRequireAuth("auth.html");
+      if (!authed) return;
+      jhMountNav();
+
+      const params = new URLSearchParams(location.search);
+      const id = params.get("id") || "";
+
+      const firms = await jhLoadFirms();
+      const internships = await jhLoadInternships();
+      const jobs = await jhLoadJobs();
+
+      const firm = firms.find(f => f._id === id);
+
+      const headerEl = document.getElementById("firmHeader");
+      const overviewEl = document.getElementById("firmOverview");
+      const oppEl = document.getElementById("firmOpportunities");
+      const contactEl = document.getElementById("firmContact");
+
+      if (!firm) {
+        headerEl.innerHTML = "<h2 class='card-title'>Firm not found</h2><p class='sub'>The requested firm could not be located.</p>";
+        overviewEl.innerHTML = "";
+        oppEl.innerHTML = "";
+        contactEl.innerHTML = "";
+      } else {
+        document.title = `JusticeHub — ${firm.name}`;
+
+        headerEl.innerHTML = `
+          <div class="row" style="margin-top:0">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="brand-mark" aria-hidden="true" style="width:50px;height:50px;font-size:1.1rem;">
+                ${firm.logoText || "LH"}
+              </div>
+              <div>
+                <h1 style="margin:0;font-size:1.6rem;">${firm.name}</h1>
+                <div class="meta">
+                  <span>${firm.city}</span>
+                </div>
+              </div>
+            </div>
+            <div class="meta">
+              ${firm.verified ? `<span class="tag gold">Verified Firm</span>` : ""}
+              <a class="btn btn-ghost btn-small" href="firms.html">Back to directory</a>
+            </div>
+          </div>
+        `;
+
+        overviewEl.innerHTML = `
+          <div class="section-head" style="margin-bottom:10px">
+            <div>
+              <h2 style="margin:0">Firm Overview</h2>
+              <p>${firm.description}</p>
+            </div>
+          </div>
+          <div>
+            <h3 class="card-title">Practice Areas</h3>
+            <div class="meta" style="margin-top:6px;">
+              ${(firm.practiceAreas || []).map(p => `<span class="tag">${p}</span>`).join("")}
+            </div>
+          </div>
+        `;
+
+        const firmInterns = internships.filter(i => i.firmName === firm.name);
+        const firmJobs = jobs.filter(j => j.firmName === firm.name);
+
+        oppEl.innerHTML = `
+          <div class="section-head" style="margin-bottom:10px">
+            <div>
+              <h2 style="margin:0">Opportunities</h2>
+              <p>Internships and entry-level jobs currently visible on JusticeHub.</p>
+            </div>
+          </div>
+          <div class="grid-1">
+            <div class="card" style="box-shadow:none">
+              <h3 class="card-title">Available Internships</h3>
+              ${firmInterns.length
+                ? firmInterns.map(i => `
+                    <div class="row" style="margin-top:8px">
+                      <div>
+                        <strong>${i.title}</strong><br />
+                        <span class="meta"><span>${i.location}</span> · <span>${i.mode}</span> · <span>${jhFormatStipend(i.stipendMin, i.stipendMax)}</span></span>
+                      </div>
+                      <a class="btn btn-ghost btn-small" href="internships.html?q=${encodeURIComponent(firm.name)}">Apply</a>
+                    </div>
+                  `).join("")
+                : `<p class="sub" style="margin:4px 0 0">No internships listed right now.</p>`
+              }
+            </div>
+            <div class="card" style="box-shadow:none;margin-top:8px">
+              <h3 class="card-title">Available Jobs</h3>
+              ${firmJobs.length
+                ? firmJobs.map(j => `
+                    <div class="row" style="margin-top:8px">
+                      <div>
+                        <strong>${j.title}</strong><br />
+                        <span class="meta"><span>${j.location}</span> · <span>${j.mode}</span> · <span>${jhFormatSalary(j.salaryMin, j.salaryMax)}</span></span>
+                      </div>
+                      <a class="btn btn-ghost btn-small" href="jobs.html?q=${encodeURIComponent(firm.name)}">Apply</a>
+                    </div>
+                  `).join("")
+                : `<p class="sub" style="margin:4px 0 0">No jobs listed right now.</p>`
+              }
+            </div>
+          </div>
+        `;
+
+        contactEl.innerHTML = `
+          <div class="section-head" style="margin-bottom:10px">
+            <div>
+              <h2 style="margin:0">Contact & Links</h2>
+              <p>Use these details to reach the firm.</p>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <p class="sub" style="margin:0 0 6px"><strong>Website:</strong> ${firm.website ? `<a href="${firm.website}" target="_blank" rel="noopener noreferrer">${firm.website}</a>` : "Not provided"}</p>
+            </div>
+            <div class="actions" style="justify-content:flex-end;align-items:flex-start">
+              <a class="btn btn-ghost btn-small" href="internships.html">Explore more internships</a>
+            </div>
+          </div>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
+

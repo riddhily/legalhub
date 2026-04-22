@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Notifications</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Student Notifications</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Student navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Student Menu</div>
+          <div class="side-links">
+            <a href="student-dashboard.html">Dashboard</a>
+            <a href="student-profile.html">My Profile</a>
+            <a href="internships.html">Internship Finder</a>
+            <a href="jobs.html">Job Portal</a>
+            <a href="tracker.html">Application Tracker</a>
+            <a href="saved.html">Saved Opportunities</a>
+            <a href="knowledge.html">Knowledge Hub</a>
+            <a class="active" href="notifications.html">Notifications</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 style="margin:0">Notifications</h2>
+              <p>Updates about your applications and platform activity.</p>
+            </div>
+          </div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">Application updates</h2>
+                <p>When an internship or job status changes, it appears here.</p>
+              </div>
+              <a class="btn btn-ghost btn-small" href="tracker.html">View full tracker</a>
+            </div>
+            <div id="appNotifications" class="grid-1"></div>
+          </section>
+
+          <div style="height:14px"></div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">System messages</h2>
+                <p>General tips and announcements from JusticeHub.</p>
+              </div>
+            </div>
+            <div id="systemNotifications" class="grid-1"></div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    jhSeed();
+    const user = jhRequireRole(["student"]);
+    jhMountNav();
+
+    const internships = jhLoad(JH_KEYS.internships, []);
+    const jobs = jhLoad(JH_KEYS.jobs, []);
+    const apps = jhLoad(JH_KEYS.applications, []).filter(a => a.userId === user.id);
+
+    const byId = (type, id) => type === "internship"
+      ? internships.find(x => x.id === id)
+      : jobs.find(x => x.id === id);
+
+    const appBox = document.getElementById("appNotifications");
+    if (!apps.length) {
+      appBox.innerHTML = `<p class="sub" style="margin:0">No application notifications yet. Apply to internships or jobs to receive updates here.</p>`;
+    } else {
+      appBox.innerHTML = apps
+        .sort((a,b) => (b.createdAt||"").localeCompare(a.createdAt||""))
+        .slice(0, 10)
+        .map(a => {
+          const item = byId(a.type, a.listingId) || {};
+          const date = (a.createdAt || "").slice(0,10);
+          return `
+            <div class="card" style="box-shadow:none">
+              <div class="meta">
+                <span class="tag gold">${a.type === "internship" ? "Internship" : "Job"}</span>
+                <span class="tag">${a.status}</span>
+                ${date ? `<span class="tag">${date}</span>` : ""}
+              </div>
+              <h3 class="card-title">${item.title || "Application"}</h3>
+              <div class="meta">
+                <span>${item.firmName || ""}</span>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    const systemBox = document.getElementById("systemNotifications");
+    systemBox.innerHTML = `
+      <div class="card" style="box-shadow:none">
+        <div class="meta">
+          <span class="tag gold">Tip</span>
+        </div>
+        <h3 class="card-title">Customise your dashboard</h3>
+        <p class="sub" style="margin:4px 0 0">
+          Update your profile (skills, interests, location) in the “My Profile” section to change which internships are
+          recommended on your dashboard.
+        </p>
+      </div>
+      <div class="card" style="box-shadow:none;margin-top:8px">
+        <div class="meta">
+          <span class="tag gold">Reminder</span>
+        </div>
+        <h3 class="card-title">Track your applications</h3>
+        <p class="sub" style="margin:4px 0 0">
+          Use the Application Tracker page to see all internships and jobs you have applied to, along with their latest status.
+        </p>
+      </div>
+    `;
+  </script>
+</body>
+</html>
+

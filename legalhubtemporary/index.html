@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Connecting Law Students with Legal Opportunities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Legal Careers · Networking · Knowledge</span>
+        </span>
+      </a>
+
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a class="active" href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="kicker">A premium legal career platform</p>
+          <h1>Connecting Law Students with Legal Opportunities</h1>
+          <p class="sub">
+            Discover internships and entry-level jobs, browse verified law firms, learn from structured legal content,
+            and build your professional network — with role-based dashboards for students and recruiters.
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="auth.html?role=student">Join as Student</a>
+            <a class="btn btn-ghost" href="auth.html?role=recruiter">Hire Legal Talent</a>
+          </div>
+
+          <div class="searchbar" aria-label="Opportunity Search">
+            <div class="search-row">
+              <label class="field">
+                <span>Keyword</span>
+                <input id="home-keyword" class="input" placeholder="e.g., litigation, corporate, drafting" />
+              </label>
+              <label class="field">
+                <span>Location</span>
+                <select id="home-location" class="input">
+                  <option value="">Any</option>
+                  <option>Delhi</option>
+                  <option>Mumbai</option>
+                  <option>Bengaluru</option>
+                  <option>Kolkata</option>
+                  <option>Remote</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Practice Area</span>
+                <select id="home-practice" class="input">
+                  <option value="">Any</option>
+                  <option>Criminal Law</option>
+                  <option>Corporate Law</option>
+                  <option>Cyber Law</option>
+                  <option>Intellectual Property Law</option>
+                  <option>Constitutional Law</option>
+                  <option>Family Law</option>
+                </select>
+              </label>
+              <button id="home-search" class="btn btn-primary" type="button">Search</button>
+            </div>
+            <p class="sub" style="margin:10px 0 0; max-width:none">
+              Tip: Search across internships, jobs, and verified firms — then filter inside each portal.
+            </p>
+          </div>
+        </div>
+
+        <aside class="glass" style="padding:18px;border-radius:22px">
+          <div class="section-head" style="margin:0 0 12px">
+            <h2 style="margin:0">Platform Snapshot</h2>
+            <span class="tag gold">Verified</span>
+          </div>
+          <div class="grid-1">
+            <div class="card" style="box-shadow:none">
+              <p class="card-title" style="margin:0">Open internships</p>
+              <div class="meta"><span id="metric-internships">—</span></div>
+            </div>
+            <div class="card" style="box-shadow:none">
+              <p class="card-title" style="margin:0">Entry-level jobs</p>
+              <div class="meta"><span id="metric-jobs">—</span></div>
+            </div>
+            <div class="card" style="box-shadow:none">
+              <p class="card-title" style="margin:0">Verified law firms</p>
+              <div class="meta"><span id="metric-firms">—</span></div>
+            </div>
+          </div>
+          <p class="sub" style="margin:12px 0 0">
+            Built with a clean, minimal, corporate UI inspired by professional networking platforms — optimized for legal hiring.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Featured Internships</h2>
+            <p>Curated roles from verified firms and chambers.</p>
+          </div>
+          <a class="btn btn-ghost btn-small" href="internships.html">View all</a>
+        </div>
+        <div id="home-internships" class="grid-4"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Latest Legal Jobs</h2>
+            <p>Entry-level roles: Junior Associate, Legal Assistant, Research Associate.</p>
+          </div>
+          <a class="btn btn-ghost btn-small" href="jobs.html">Browse jobs</a>
+        </div>
+        <div id="home-jobs" class="grid-3"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Top Law Firms</h2>
+            <p>Verified firms with active opportunities.</p>
+          </div>
+          <a class="btn btn-ghost btn-small" href="firms.html">Firm directory</a>
+        </div>
+        <div id="home-firms" class="grid-4"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Trending Knowledge Articles</h2>
+            <p>Structured legal learning, case summaries, drafting techniques, and career guidance.</p>
+          </div>
+          <a class="btn btn-ghost btn-small" href="knowledge.html">Open Knowledge Hub</a>
+        </div>
+        <div id="home-knowledge" class="grid-3"></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Verified Firm Directory Preview</h2>
+            <p>Browse logos and quick descriptions — then open firm pages for active roles.</p>
+          </div>
+          <a class="btn btn-ghost btn-small" href="firms.html">Explore firms</a>
+        </div>
+        <div id="home-firm-preview" class="grid-4"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>JusticeHub</h3>
+        <div class="meta">
+          <span class="tag gold">⚖ Legal</span>
+          <span class="tag">Dark theme</span>
+          <span class="tag">Role-based</span>
+        </div>
+        <div class="social" aria-label="Social links">
+          <a class="iconbtn" href="#" aria-label="LinkedIn">in</a>
+          <a class="iconbtn" href="#" aria-label="X">x</a>
+          <a class="iconbtn" href="mailto:contact@justicehub.example" aria-label="Email">@</a>
+        </div>
+      </div>
+      <div>
+        <h3>Platform</h3>
+        <a href="internships.html">Internships</a>
+        <a href="jobs.html">Jobs</a>
+        <a href="firms.html">Law Firms</a>
+        <a href="knowledge.html">Knowledge Hub</a>
+      </div>
+      <div>
+        <h3>Users</h3>
+        <a href="auth.html?role=student">Join as Student</a>
+        <a href="auth.html?role=recruiter">Join as Recruiter</a>
+        <a href="auth.html">Login</a>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <a href="mailto:contact@justicehub.example">contact@justicehub.example</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const user = jhRequireAuth("auth.html");
+      if (!user) return;
+      jhMountNav();
+
+      const internships = await jhLoadInternships();
+      const jobs = await jhLoadJobs();
+      const firms = await jhLoadFirms();
+      const knowledge = await jhLoadKnowledge();
+
+      document.getElementById("metric-internships").textContent = String(internships.length);
+      document.getElementById("metric-jobs").textContent = String(jobs.length);
+      document.getElementById("metric-firms").textContent = String(firms.filter(f => f.verified).length);
+
+      const homeIntern = document.getElementById("home-internships");
+      homeIntern.innerHTML = internships.slice(0,4).map(i => `
+        <article class="card">
+          <div class="meta">
+            <span class="tag gold">${i.practiceArea}</span>
+            <span class="tag">${i.mode}</span>
+          </div>
+          <h3 class="card-title">${i.title}</h3>
+          <div class="meta"><span>${i.firmName}</span><span>·</span><span>${i.location}</span></div>
+          <div class="row">
+            <span class="tag">${jhFormatStipend(i.stipendMin, i.stipendMax)}</span>
+            <a class="btn btn-ghost btn-small" href="internships.html">View</a>
+          </div>
+        </article>
+      `).join("");
+
+      const homeJobs = document.getElementById("home-jobs");
+      homeJobs.innerHTML = jobs.slice(0,3).map(j => `
+        <article class="card">
+          <div class="meta">
+            <span class="tag gold">${j.practiceArea}</span>
+            <span class="tag">${j.mode}</span>
+          </div>
+          <h3 class="card-title">${j.title}</h3>
+          <div class="meta"><span>${j.firmName}</span><span>·</span><span>${j.location}</span></div>
+          <div class="row">
+            <span class="tag">${jhFormatSalary(j.salaryMin, j.salaryMax)}</span>
+            <a class="btn btn-ghost btn-small" href="jobs.html">View</a>
+          </div>
+        </article>
+      `).join("");
+
+      const homeFirms = document.getElementById("home-firms");
+      homeFirms.innerHTML = firms.filter(f => f.verified).slice(0,4).map(f => `
+        <article class="card">
+          <div class="meta">
+            <span class="tag gold">Verified</span>
+            <span class="tag">${f.city}</span>
+          </div>
+          <h3 class="card-title">${f.name}</h3>
+          <p class="sub" style="margin:6px 0 0">${f.description}</p>
+          <div class="row">
+            <span class="tag">${f.practiceAreas.slice(0,2).join(" · ")}</span>
+            <a class="btn btn-ghost btn-small" href="firm.html?id=${encodeURIComponent(f._id)}">Open</a>
+          </div>
+        </article>
+      `).join("");
+
+      const homeKnow = document.getElementById("home-knowledge");
+      homeKnow.innerHTML = knowledge.slice(0,3).map(k => `
+        <article class="card">
+          <div class="meta">
+            <span class="tag gold">${k.category}</span>
+            <span class="tag">${k.readTime} read</span>
+          </div>
+          <h3 class="card-title">${k.title}</h3>
+          <div class="meta"><span>By ${k.author}</span></div>
+          <div class="row">
+            <span class="tag">Knowledge</span>
+            <a class="btn btn-ghost btn-small" href="knowledge.html#${k.id}">Read</a>
+          </div>
+        </article>
+      `).join("");
+
+      const preview = document.getElementById("home-firm-preview");
+      preview.innerHTML = firms.filter(f => f.verified).slice(0,4).map(f => `
+        <article class="card">
+          <div class="meta">
+            <span class="tag gold">${f.logoText}</span>
+            <span class="tag">${f.city}</span>
+          </div>
+          <h3 class="card-title">${f.name}</h3>
+          <p class="sub" style="margin:6px 0 0">${f.description}</p>
+          <div class="row">
+            <a class="btn btn-ghost btn-small" href="firm.html?id=${encodeURIComponent(f._id)}">View firm</a>
+            <a class="btn btn-ghost btn-small" href="internships.html">Internships</a>
+          </div>
+        </article>
+      `).join("");
+
+      document.getElementById("home-search").addEventListener("click", () => {
+        const keyword = encodeURIComponent((document.getElementById("home-keyword").value || "").trim());
+        const loc = encodeURIComponent(document.getElementById("home-location").value || "");
+        const prac = encodeURIComponent(document.getElementById("home-practice").value || "");
+        window.location.href = `internships.html?q=${keyword}&location=${loc}&practice=${prac}`;
+      });
+    })();
+  </script>
+</body>
+</html>
+

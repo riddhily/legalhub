@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Application Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Application Tracker</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Student navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Student Menu</div>
+          <div class="side-links">
+            <a href="student-dashboard.html">Dashboard</a>
+            <a href="student-profile.html">My Profile</a>
+            <a href="internships.html">Internship Finder</a>
+            <a href="jobs.html">Job Portal</a>
+            <a class="active" href="tracker.html">Application Tracker</a>
+            <a href="saved.html">Saved Opportunities</a>
+            <a href="knowledge.html">Knowledge Hub</a>
+            <a href="notifications.html">Notifications</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 style="margin:0">Application Tracker</h2>
+              <p>Monitor the status of internships and jobs you applied to.</p>
+            </div>
+            <span class="tag gold">Statuses: Applied · Under Review · Shortlisted · Interview · Selected · Rejected</span>
+          </div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">My applications</h2>
+                <p>Updated automatically when recruiters change statuses (demo).</p>
+              </div>
+            </div>
+            <div style="overflow:auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Firm</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Applied on</th>
+                  </tr>
+                </thead>
+                <tbody id="rows"></tbody>
+              </table>
+            </div>
+            <p id="empty" class="sub" style="margin:10px 0 0">—</p>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    jhSeed();
+    const user = jhRequireRole(["student"]);
+    jhMountNav();
+
+    const internships = jhLoad(JH_KEYS.internships, []);
+    const jobs = jhLoad(JH_KEYS.jobs, []);
+    const apps = jhLoad(JH_KEYS.applications, []).filter(a => a.userId === user.id);
+
+    const byId = (type, id) => type === "internship"
+      ? internships.find(x => x.id === id)
+      : jobs.find(x => x.id === id);
+
+    const rows = document.getElementById("rows");
+    const empty = document.getElementById("empty");
+
+    if (!apps.length){
+      rows.innerHTML = "";
+      empty.textContent = "No applications yet. Apply from the internship or job portal.";
+    } else {
+      empty.textContent = "";
+      rows.innerHTML = apps
+        .sort((a,b) => (b.createdAt||"").localeCompare(a.createdAt||""))
+        .map(a => {
+          const item = byId(a.type, a.listingId) || {};
+          const d = (a.createdAt || "").slice(0,10);
+          return `
+            <tr>
+              <td>${a.type}</td>
+              <td>${item.title || "Listing"}</td>
+              <td>${item.firmName || "-"}</td>
+              <td>${item.location || "-"}</td>
+              <td><span class="tag gold">${a.status}</span></td>
+              <td>${d || "-"}</td>
+            </tr>
+          `;
+        })
+        .join("");
+    }
+  </script>
+</body>
+</html>
+

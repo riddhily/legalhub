@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Login / Signup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Secure role-based access</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="hero" style="min-height: calc(100vh - 76px); padding-bottom: 56px;">
+    <div class="container" style="display:grid;place-items:center;">
+      <div class="glass" style="width:min(980px, 100%); padding:18px;">
+        <div class="grid-2" style="gap:14px;">
+          <!-- Login -->
+          <section class="card" style="box-shadow:none">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">Login</h2>
+                <p>Choose your role to access the correct dashboard.</p>
+              </div>
+              <span class="tag gold">Secure</span>
+            </div>
+
+            <form id="login-form" class="grid-1">
+              <label class="field">
+                <span>Email</span>
+                <input id="login-email" class="input" type="email" placeholder="name@example.com" required />
+              </label>
+              <label class="field">
+                <span>Password</span>
+                <input id="login-password" class="input" type="password" placeholder="••••••••" required />
+              </label>
+              <label class="field">
+                <span>Role</span>
+                <select id="login-role" class="input" required>
+                  <option value="student">Law Student</option>
+                  <option value="recruiter">Lawyer / Law Firm</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </label>
+              <button class="btn btn-primary btn-full" type="submit">Login</button>
+              <div class="meta" style="justify-content:space-between">
+                <button id="forgot-btn" class="btn btn-ghost btn-small" type="button">Forgot password</button>
+                <span class="tag">Demo auth (local)</span>
+              </div>
+              <div id="login-msg" class="meta" aria-live="polite"></div>
+            </form>
+          </section>
+
+          <!-- Signup -->
+          <section class="card" style="box-shadow:none">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">Signup</h2>
+                <p>Create an account as Student or Lawyer/Firm.</p>
+              </div>
+              <div class="meta">
+                <button class="btn btn-ghost btn-small" type="button" data-role-tab="student">Student</button>
+                <button class="btn btn-ghost btn-small" type="button" data-role-tab="recruiter">Lawyer/Firm</button>
+              </div>
+            </div>
+
+            <form id="signup-form" class="grid-1">
+              <input type="hidden" id="signup-role" value="student" />
+              <label class="field">
+                <span>Full name / Firm name</span>
+                <input id="signup-name" class="input" type="text" placeholder="Your name or firm name" required />
+              </label>
+              <label class="field">
+                <span>Email</span>
+                <input id="signup-email" class="input" type="email" placeholder="name@example.com" required />
+              </label>
+              <label class="field">
+                <span>Password</span>
+                <input id="signup-password" class="input" type="password" placeholder="Create a strong password" required />
+              </label>
+
+              <!-- Student fields -->
+              <div id="student-fields" class="grid-2">
+                <label class="field">
+                  <span>Law college</span>
+                  <input id="student-college" class="input" type="text" placeholder="University / College" />
+                </label>
+                <label class="field">
+                  <span>Degree</span>
+                  <select id="student-degree" class="input">
+                    <option>LLB</option>
+                    <option>BA LLB</option>
+                    <option>LLM</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Year of study</span>
+                  <select id="student-year" class="input">
+                    <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Location</span>
+                  <input id="student-location" class="input" type="text" placeholder="City" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Skills</span>
+                  <input id="student-skills" class="input" type="text" placeholder="Research, Drafting, Contract review" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Practice interests</span>
+                  <input id="student-interests" class="input" type="text" placeholder="Corporate, Criminal, Constitutional, IP, Litigation" />
+                </label>
+              </div>
+
+              <!-- Recruiter fields -->
+              <div id="recruiter-fields" class="grid-2 hidden">
+                <label class="field">
+                  <span>City</span>
+                  <input id="recruiter-city" class="input" type="text" placeholder="City" />
+                </label>
+                <label class="field">
+                  <span>Website (optional)</span>
+                  <input id="recruiter-website" class="input" type="url" placeholder="https://..." />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Practice areas</span>
+                  <input id="recruiter-practice" class="input" type="text" placeholder="Corporate, IP, Disputes, Arbitration..." />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Contact person</span>
+                  <input id="recruiter-contact" class="input" type="text" placeholder="Name" />
+                </label>
+              </div>
+
+              <button class="btn btn-primary btn-full" type="submit">Create account</button>
+              <div id="signup-msg" class="meta" aria-live="polite"></div>
+            </form>
+
+            <div id="forgot-panel" class="card hidden" style="box-shadow:none;margin-top:12px">
+              <h3 class="card-title">Forgot password</h3>
+              <p class="sub" style="margin:0 0 10px">
+                This demo does not send emails. In production, this would trigger a secure password reset flow.
+              </p>
+              <button id="forgot-close" class="btn btn-ghost btn-small" type="button">Close</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      jhMountNav();
+
+      const currentUser = jhGetCurrentUser();
+      if (currentUser) {
+        const dash = currentUser.role === "student" ? "student-dashboard.html"
+          : currentUser.role === "recruiter" ? "recruiter-dashboard.html"
+          : currentUser.role === "admin" ? "admin.html" : "index.html";
+        window.location.href = dash;
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const presetRole = params.get("role");
+      if (presetRole === "student") document.getElementById("login-role").value = "student";
+      if (presetRole === "recruiter") document.getElementById("login-role").value = "recruiter";
+
+      const tabs = document.querySelectorAll("[data-role-tab]");
+      const roleInput = document.getElementById("signup-role");
+      const studentFields = document.getElementById("student-fields");
+      const recruiterFields = document.getElementById("recruiter-fields");
+
+      function setSignupRole(role){
+        roleInput.value = role;
+        tabs.forEach(t => t.classList.remove("btn-primary"));
+        tabs.forEach(t => t.classList.add("btn-ghost"));
+        const active = document.querySelector(`[data-role-tab="${role}"]`);
+        if (active){ active.classList.remove("btn-ghost"); active.classList.add("btn-primary"); }
+        if (role === "student"){ studentFields.classList.remove("hidden"); recruiterFields.classList.add("hidden"); }
+        else { studentFields.classList.add("hidden"); recruiterFields.classList.remove("hidden"); }
+      }
+      tabs.forEach(t => t.addEventListener("click", () => setSignupRole(t.dataset.roleTab)));
+      setSignupRole("student");
+
+      // Login
+      document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value.trim().toLowerCase();
+        const password = document.getElementById("login-password").value;
+        const role = document.getElementById("login-role").value;
+
+        try {
+          const data = await jhFetch("/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ email, password, role })
+          });
+          jhSetToken(data.token);
+          jhSetCurrentUser(data.user);
+          window.location.href = role === "student" ? "student-dashboard.html"
+            : role === "recruiter" ? "recruiter-dashboard.html" : "admin.html";
+        } catch (err) {
+          document.getElementById("login-msg").textContent = err.message || "Login failed.";
+        }
+      });
+
+      // Signup
+      document.getElementById("signup-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const role = document.getElementById("signup-role").value;
+        const name = document.getElementById("signup-name").value.trim();
+        const email = document.getElementById("signup-email").value.trim().toLowerCase();
+        const password = document.getElementById("signup-password").value;
+
+        const profile = role === "student"
+          ? {
+              college: document.getElementById("student-college").value.trim(),
+              degree: document.getElementById("student-degree").value,
+              yearOfStudy: document.getElementById("student-year").value,
+              location: document.getElementById("student-location").value.trim(),
+              skills: document.getElementById("student-skills").value.trim(),
+              interests: document.getElementById("student-interests").value.trim(),
+            }
+          : {
+              city: document.getElementById("recruiter-city").value.trim(),
+              website: document.getElementById("recruiter-website").value.trim(),
+              practiceAreas: document.getElementById("recruiter-practice").value.trim(),
+              contactPerson: document.getElementById("recruiter-contact").value.trim(),
+            };
+
+        try {
+          await jhFetch("/auth/register", {
+            method: "POST",
+            body: JSON.stringify({ name, email, password, role, profile })
+          });
+          document.getElementById("signup-msg").textContent = "Account created. You can login now.";
+        } catch (err) {
+          document.getElementById("signup-msg").textContent = err.message || "Signup failed.";
+        }
+      });
+
+      // Forgot password
+      const forgotPanel = document.getElementById("forgot-panel");
+      document.getElementById("forgot-btn").addEventListener("click", () => forgotPanel.classList.remove("hidden"));
+      document.getElementById("forgot-close").addEventListener("click", () => forgotPanel.classList.add("hidden"));
+    })();
+  </script>
+</body>
+</html>
+

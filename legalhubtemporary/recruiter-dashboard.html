@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JusticeHub — Lawyer / Firm Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="jh.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="index.html" aria-label="JusticeHub Home">
+        <span class="brand-mark" aria-hidden="true">⚖</span>
+        <span class="brand-title">
+          <strong>JusticeHub</strong>
+          <span>Lawyer / Firm Portal</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Recruiter navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle menu">
+          <span></span><span></span>
+        </button>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="internships.html">Internships</a>
+          <a href="jobs.html">Jobs</a>
+          <a href="firms.html">Law Firms</a>
+          <a href="knowledge.html">Knowledge Hub</a>
+          <span id="nav-auth-slot"></span>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="side-title">Lawyer / Firm Menu</div>
+          <div class="side-links">
+            <a class="active" href="recruiter-dashboard.html">Dashboard</a>
+          </div>
+        </aside>
+
+        <section class="content">
+          <div class="page-title">
+            <div>
+              <h2 id="hello" style="margin:0">Recruitment Dashboard</h2>
+              <p>Post internships and jobs, and review student applications.</p>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <article class="card">
+              <div class="meta"><span class="tag gold">Internships posted</span></div>
+              <h3 class="card-title" id="stat-interns">—</h3>
+              <div class="meta"><span>Active internship listings you created</span></div>
+            </article>
+            <article class="card">
+              <div class="meta"><span class="tag gold">Jobs posted</span></div>
+              <h3 class="card-title" id="stat-jobs">—</h3>
+              <div class="meta"><span>Entry-level roles you created</span></div>
+            </article>
+            <article class="card">
+              <div class="meta"><span class="tag gold">Applications received</span></div>
+              <h3 class="card-title" id="stat-apps">—</h3>
+              <div class="meta"><span>Student applications for your listings</span></div>
+            </article>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <div class="grid-2">
+            <!-- Post Internship -->
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Post Internship</h2>
+                  <p>Create internship opportunities visible to students in the portal.</p>
+                </div>
+              </div>
+              <form id="internForm" class="grid-2">
+                <label class="field">
+                  <span>Title</span>
+                  <input id="iTitle" class="input" required placeholder="e.g. Litigation Intern" />
+                </label>
+                <label class="field">
+                  <span>Practice area</span>
+                  <input id="iPractice" class="input" required placeholder="e.g. Criminal Law" />
+                </label>
+                <label class="field">
+                  <span>Location</span>
+                  <input id="iLocation" class="input" required placeholder="City or Remote" />
+                </label>
+                <label class="field">
+                  <span>Mode</span>
+                  <select id="iMode" class="input">
+                    <option>In-office</option>
+                    <option>Hybrid</option>
+                    <option>Remote</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Stipend min (₹/month)</span>
+                  <input id="iStipMin" type="number" min="0" class="input" placeholder="0" />
+                </label>
+                <label class="field">
+                  <span>Stipend max (₹/month)</span>
+                  <input id="iStipMax" type="number" min="0" class="input" placeholder="0" />
+                </label>
+                <label class="field">
+                  <span>Duration (weeks)</span>
+                  <input id="iDuration" type="number" min="1" class="input" placeholder="8" />
+                </label>
+                <label class="field">
+                  <span>Application deadline</span>
+                  <input id="iDeadline" type="date" class="input" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Description</span>
+                  <textarea id="iDesc" class="input" rows="2" placeholder="Short description of work, exposure, and expectations"></textarea>
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Eligibility</span>
+                  <textarea id="iElig" class="input" rows="2" placeholder="Preferred year, skills, or prior experience"></textarea>
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Required skills (comma separated)</span>
+                  <input id="iSkills" class="input" placeholder="Research, Drafting, Court visits" />
+                </label>
+                <div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+                  <button class="btn btn-ghost btn-small" type="reset">Clear</button>
+                  <button class="btn btn-primary btn-small" type="submit">Post Internship</button>
+                </div>
+                <p id="iMsg" class="meta" style="grid-column:1/-1;margin:4px 0 0" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <!-- Post Job -->
+            <section class="card">
+              <div class="section-head" style="margin-bottom:10px">
+                <div>
+                  <h2 style="margin:0">Post Job</h2>
+                  <p>Publish entry-level legal roles for JusticeHub students.</p>
+                </div>
+              </div>
+              <form id="jobForm" class="grid-2">
+                <label class="field">
+                  <span>Title</span>
+                  <input id="jTitle" class="input" required placeholder="e.g. Junior Associate" />
+                </label>
+                <label class="field">
+                  <span>Practice area</span>
+                  <input id="jPractice" class="input" required placeholder="e.g. Corporate Law" />
+                </label>
+                <label class="field">
+                  <span>Location</span>
+                  <input id="jLocation" class="input" required placeholder="City or Remote" />
+                </label>
+                <label class="field">
+                  <span>Mode</span>
+                  <select id="jMode" class="input">
+                    <option>In-office</option>
+                    <option>Hybrid</option>
+                    <option>Remote</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Salary min (₹/year)</span>
+                  <input id="jSalMin" type="number" min="0" class="input" placeholder="500000" />
+                </label>
+                <label class="field">
+                  <span>Salary max (₹/year)</span>
+                  <input id="jSalMax" type="number" min="0" class="input" placeholder="800000" />
+                </label>
+                <label class="field">
+                  <span>Application deadline</span>
+                  <input id="jDeadline" type="date" class="input" />
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Description</span>
+                  <textarea id="jDesc" class="input" rows="2" placeholder="Role responsibilities and expectations"></textarea>
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Eligibility</span>
+                  <textarea id="jElig" class="input" rows="2" placeholder="PQE band, preferred background, skills"></textarea>
+                </label>
+                <label class="field" style="grid-column:1/-1">
+                  <span>Required skills (comma separated)</span>
+                  <input id="jSkills" class="input" placeholder="Drafting, Contract review, Research" />
+                </label>
+                <div style="grid-column:1/-1;display:flex;justify-content:flex-end;gap:10px;margin-top:4px">
+                  <button class="btn btn-ghost btn-small" type="reset">Clear</button>
+                  <button class="btn btn-primary btn-small" type="submit">Post Job</button>
+                </div>
+                <p id="jMsg" class="meta" style="grid-column:1/-1;margin:4px 0 0" aria-live="polite"></p>
+              </form>
+            </section>
+          </div>
+
+          <div style="height:14px"></div>
+
+          <section class="card">
+            <div class="section-head" style="margin-bottom:10px">
+              <div>
+                <h2 style="margin:0">Student Applications</h2>
+                <p>Recent applications received for your internships and jobs.</p>
+              </div>
+            </div>
+            <div id="appList" class="grid-1"></div>
+          </section>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="jh.js"></script>
+  <script>
+    (async () => {
+      await jhSeed();
+      const user = jhRequireRole(["recruiter"]);
+      if (!user) return;
+      jhMountNav();
+
+      const internships = await jhLoadInternships();
+      const jobs = await jhLoadJobs();
+      let myApps = [];
+      try { myApps = await jhLoadRecruiterApps(); } catch {}
+
+      const firmName = user.name;
+      document.getElementById("hello").textContent = `Welcome, ${firmName}`;
+
+      const myInterns = internships.filter(i => i.firmId === user.id || i.firmName === firmName);
+      const myJobs = jobs.filter(j => j.firmId === user.id || j.firmName === firmName);
+
+      document.getElementById("stat-interns").textContent = String(myInterns.length);
+      document.getElementById("stat-jobs").textContent = String(myJobs.length);
+      document.getElementById("stat-apps").textContent = String(myApps.length);
+
+      const appList = document.getElementById("appList");
+      if (!myApps.length) {
+        appList.innerHTML = `<p class="sub" style="margin:0">No applications yet. Once students apply, they will appear here with status.</p>`;
+      } else {
+        appList.innerHTML = myApps.map(a => {
+          const listing = a.listingId || {};
+          const applicant = a.userId || {};
+          return `
+            <div class="card" style="box-shadow:none">
+              <div class="meta">
+                <span class="tag gold">${a.type === "internship" ? "Internship" : "Job"}</span>
+                <span class="tag">${a.status}</span>
+              </div>
+              <h3 class="card-title">${listing.title || "Listing"}</h3>
+              <div class="meta"><span>Applicant: ${applicant.name || applicant.email || a.userId}</span></div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      // Create internship
+      document.getElementById("internForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await jhPostOpportunity({
+            type: "internship",
+            firmName,
+            title: document.getElementById("iTitle").value.trim(),
+            practiceArea: document.getElementById("iPractice").value.trim() || "General",
+            location: document.getElementById("iLocation").value.trim() || "Remote",
+            mode: document.getElementById("iMode").value,
+            stipendMin: Number(document.getElementById("iStipMin").value || 0),
+            stipendMax: Number(document.getElementById("iStipMax").value || 0),
+            durationWeeks: Number(document.getElementById("iDuration").value || 0),
+            deadline: document.getElementById("iDeadline").value || "",
+            description: document.getElementById("iDesc").value.trim(),
+            eligibility: document.getElementById("iElig").value.trim(),
+            requiredSkills: (document.getElementById("iSkills").value || "").split(",").map(s => s.trim()).filter(Boolean),
+          });
+          document.getElementById("iMsg").textContent = "Internship posted. It is now visible in the Internship Portal.";
+          e.target.reset();
+        } catch (err) {
+          document.getElementById("iMsg").textContent = err.message || "Error posting.";
+        }
+      });
+
+      // Create job
+      document.getElementById("jobForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await jhPostOpportunity({
+            type: "job",
+            firmName,
+            title: document.getElementById("jTitle").value.trim(),
+            practiceArea: document.getElementById("jPractice").value.trim() || "General",
+            location: document.getElementById("jLocation").value.trim() || "Remote",
+            mode: document.getElementById("jMode").value,
+            salaryMin: Number(document.getElementById("jSalMin").value || 0),
+            salaryMax: Number(document.getElementById("jSalMax").value || 0),
+            deadline: document.getElementById("jDeadline").value || "",
+            description: document.getElementById("jDesc").value.trim(),
+            eligibility: document.getElementById("jElig").value.trim(),
+            requiredSkills: (document.getElementById("jSkills").value || "").split(",").map(s => s.trim()).filter(Boolean),
+          });
+          document.getElementById("jMsg").textContent = "Job posted. It is now visible in the Job Portal.";
+          e.target.reset();
+        } catch (err) {
+          document.getElementById("jMsg").textContent = err.message || "Error posting.";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
+
